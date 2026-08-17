@@ -25,6 +25,3 @@ Uma aplicação web ágil e direta ao ponto, desenvolvida para resolver uma dor 
 
 
 
-1. Clone este repositório:
-   ```bash
-   git clone [https://github.com/seu-usuario/gerador-de-propostas.git](https://github.com/seu-usuario/gerador-de-propostas.git)
