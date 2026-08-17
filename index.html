@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Propostas Freelancer</title>
+    <style>
+        :root {
+            --bg: #0b1020;
+            --panel: #121a2b;
+            --panel-strong: #1b2438;
+            --card: #182236;
+            --line: rgba(255,255,255,0.08);
+            --text: #eaf2ff;
+            --muted: #8ea3c7;
+            --primary: #6ee7b7;
+            --primary-strong: #2dd4bf;
+            --secondary: #a78bfa;
+            --accent: #f472b6;
+            --shadow: rgba(12, 17, 30, 0.5);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(110, 231, 183, 0.18), transparent 25%),
+                radial-gradient(circle at bottom right, rgba(167, 139, 250, 0.15), transparent 25%),
+                var(--bg);
+            color: var(--text);
+            padding: 32px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(18, 26, 43, 0.9);
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            box-shadow: 0 30px 80px var(--shadow);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 26px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(1.8rem, 3vw, 2.8rem);
+            line-height: 1.2;
+            color: var(--primary);
+            letter-spacing: -0.05em;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border: 1px solid rgba(110, 231, 183, 0.35);
+            border-radius: 999px;
+            background: rgba(110, 231, 183, 0.08);
+            color: var(--primary);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-weight: 700;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(340px, 420px) minmax(0, 1fr);
+            gap: 26px;
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--muted);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 14px 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.02);
+            color: var(--text);
+            font-size: 15px;
+            font-family: inherit;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: rgba(234, 242, 255, 0.36);
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: rgba(110, 231, 183, 0.8);
+            box-shadow: 0 0 0 4px rgba(110, 231, 183, 0.12);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .button-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        button {
+            width: 100%;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-strong));
+            color: #06130f;
+            box-shadow: 0 12px 30px rgba(45, 212, 191, 0.28);
+        }
+
+        .btn-secondary {
+            background: rgba(167, 139, 250, 0.12);
+            color: #e9e3ff;
+            border: 1px solid rgba(167, 139, 250, 0.35);
+        }
+
+        .btn-accent {
+            background: rgba(244, 114, 182, 0.12);
+            color: #ffd7eb;
+            border: 1px solid rgba(244, 114, 182, 0.4);
+        }
+
+        .preview-card {
+            background: linear-gradient(180deg, #f8fafc, #edf3ff);
+            border-radius: 20px;
+            border: 1px solid rgba(92, 103, 131, 0.2);
+            overflow: hidden;
+            min-height: 560px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+        }
+
+        .preview-header {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: white;
+            padding: 18px 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .preview-header strong {
+            font-size: 0.9rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .preview-body {
+            padding: 28px 32px 24px;
+            color: #111827;
+            flex: 1;
+        }
+
+        .result-surface {
+            display: none;
+            padding: 10px 0 0;
+        }
+
+        .proposta-output {
+            white-space: pre-wrap;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            font-size: 15px;
+            color: #0f172a;
+            background: rgba(255,255,255,0.6);
+            border: 1px solid rgba(15,23,42,0.08);
+            border-radius: 14px;
+            padding: 22px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-surface.visible {
+            display: block;
+            animation: fadeIn 0.35s ease-out;
+        }
+
+        @media (max-width: 900px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .button-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media print {
+            body {
+                background: white !important;
+                padding: 0;
+            }
+
+            .container {
+                max-width: none;
+                background: white;
+                box-shadow: none;
+                border: none;
+                padding: 0;
+            }
+
+            .topbar,
+            .panel,
+            .preview-header {
+                display: none !important;
+            }
+
+            .layout {
+                display: block;
+            }
+
+            .preview-card {
+                min-height: auto;
+                border: none;
+                box-shadow: none;
+                background: white;
+            }
+
+            .preview-body {
+                padding: 0;
+            }
+
+            .result-surface {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="topbar">
+            <h1>Gerador de Propostas</h1>
+            <span class="badge">PDF moderno</span>
+        </div>
+
+        <div class="layout">
+            <div class="panel">
+                <div class="form-group">
+                    <label for="cliente">Nome do Cliente / Empresa</label>
+                    <input type="text" id="cliente" placeholder="Ex: Tech Solutions Ltda">
+                </div>
+
+                <div class="form-group">
+                    <label for="projeto">Nome do Projeto</label>
+                    <input type="text" id="projeto" placeholder="Ex: Desenvolvimento de Landing Page">
+                </div>
+
+                <div class="form-group">
+                    <label for="dev">Nome do Desenvolvedor</label>
+                    <input type="text" id="dev" placeholder="Ex: Bruno Costa">
+                </div>
+
+                <div class="form-group">
+                    <label for="escopo">Escopo</label>
+                    <textarea id="escopo" placeholder="Ex: Criação de uma landing page responsiva com design premium, formulário, integração e otimização..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="horas">Horas Estimadas</label>
+                    <input type="number" id="horas" placeholder="Ex: 40">
+                </div>
+
+                <div class="form-group">
+                    <label for="valorHora">Valor por Hora (R$)</label>
+                    <input type="number" id="valorHora" placeholder="Ex: 75">
+                </div>
+
+                <div class="form-group">
+                    <label for="prazo">Prazo de Entrega</label>
+                    <input type="number" id="prazo" placeholder="Ex: 15">
+                </div>
+
+                <div class="button-row">
+                    <button class="btn-primary" onclick="gerarProposta()">Gerar proposta</button>
+                    <button class="btn-secondary" onclick="window.print()">Imprimir / PDF</button>
+                </div>
+            </div>
+
+            <div class="preview-card">
+                <div class="preview-header">
+                    <strong>Preview do documento</strong>
+                    <button class="btn-accent" onclick="exportarPdf()" style="width:auto; padding:10px 14px; font-size: 11px; border-radius: 10px;">Exportar PDF</button>
+                </div>
+
+                <div class="preview-body">
+                    <div class="result-surface" id="resultadoContainer">
+                        <div class="proposta-output" id="textoProposta"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+        function gerarProposta() {
+            const cliente = document.getElementById('cliente').value.trim();
+            const projeto = document.getElementById('projeto').value.trim();
+            const escopo = document.getElementById('escopo').value.trim();
+            const horas = parseFloat(document.getElementById('horas').value);
+            const valorHora = parseFloat(document.getElementById('valorHora').value);
+            const prazo = document.getElementById('prazo').value.trim();
+            const dev = document.getElementById('dev').value.trim();
+
+            if (!cliente || !projeto || !escopo || !horas || !valorHora || !prazo || !dev) {
+                alert('Preencha todos os campos antes de gerar a proposta.');
+                return;
+            }
+
+            const valorTotal = horas * valorHora;
+            const valorFormatado = valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            const dataAtual = new Date().toLocaleDateString('pt-BR');
+
+            const modeloProposta = `PROPOSTA COMERCIAL
+Data: ${dataAtual}
+
+Olá, equipe da ${cliente}.
+Agradeço o interesse no meu trabalho. Segue abaixo a proposta comercial para o projeto solicitado.
+
+PROJETO: ${projeto}
+
+ESCOPO DO TRABALHO:
+${escopo}
+
+PRAZO ESTIMADO:
+${prazo} dias úteis a partir da aprovação.
+
+INVESTIMENTO:
+Com base no escopo definido e na estimativa de ${horas} horas de desenvolvimento, o valor total do investimento é de:
+R$ ${valorFormatado}
+
+Estou à disposição para tirar dúvidas, ajustar detalhes e iniciar o projeto assim que houver a aprovação.
+
+Atenciosamente,
+${dev}
+Desenvolvedor`;
+
+            document.getElementById('textoProposta').innerText = modeloProposta;
+            document.getElementById('resultadoContainer').classList.add('visible');
+            document.getElementById('resultadoContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function copiarTexto() {
+            const texto = document.getElementById('textoProposta').innerText;
+            navigator.clipboard.writeText(texto)
+                .then(() => alert('Proposta copiada com sucesso!'))
+                .catch(() => alert('Não foi possível copiar automaticamente. Use Ctrl/Cmd + C.'));
+        }
+
+        async function exportarPdf() {
+            const container = document.getElementById('resultadoContainer');
+
+            if (!container || !container.classList.contains('visible')) {
+                alert('Gere a proposta primeiro antes de exportar o PDF.');
+                return;
+            }
+
+            try {
+                const { jsPDF } = window.jspdf;
+                const canvas = await html2canvas(container, {
+                    scale: 2,
+                    backgroundColor: '#ffffff'
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const imgProps = pdf.getImageProperties(imgData);
+                const imgHeight = (imgProps.height * pageWidth) / imgProps.width;
+
+                let heightLeft = imgHeight;
+                let position = 0;
+
+                pdf.addImage(imgData, 'PNG', 0, position, pageWidth, imgHeight, undefined, 'FAST');
+                heightLeft -= pageHeight;
+
+                while (heightLeft > 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, pageWidth, imgHeight, undefined, 'FAST');
+                    heightLeft -= pageHeight;
+                }
+
+                pdf.save('proposta-comercial.pdf');
+            } catch (error) {
+                console.error(error);
+                alert('Não foi possível gerar o PDF automaticamente. Tente usar a opção de impressão em PDF.');
+            }
+        }
+    </script>
+</body>
+</html>
